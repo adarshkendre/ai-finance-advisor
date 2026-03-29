@@ -9,7 +9,43 @@ Rules:
   - Never give generic advice — every item is tied to a specific number
   - Deduplicate cross-agent recommendations
   - Add a "what to do this month" section
+  - Use Gemini AI (via GOOGLE_API_KEY) to generate an enhanced AI summary
 """
+
+import os
+import json
+
+
+def _get_gemini_summary(profile_text: str, analysis_json: str) -> str:
+    """Call Gemini API to generate a rich, personalised financial advice summary."""
+    try:
+        import google.generativeai as genai
+
+        api_key = os.environ.get("GOOGLE_API_KEY", "")
+        if not api_key:
+            return ""
+
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel("gemini-1.5-flash")
+
+        prompt = f"""You are an expert AI financial advisor for Indian investors (SEBI-aware).
+Based on the following financial profile and analysis data, write a concise, personalised, 
+actionable financial advice summary in 3-4 sentences. Use specific numbers from the data.
+Mention: overall financial health, top 1-2 priorities, and one quick win this month.
+Do NOT use phrases like "buy X stock" or give specific scheme names. Keep it under 120 words.
+
+Financial Profile & Analysis:
+{profile_text}
+
+Key Metrics (JSON):
+{analysis_json}
+
+Write the summary now (plain text, no markdown, no bullet points):"""
+
+        response = model.generate_content(prompt)
+        return response.text.strip()
+    except Exception:
+        return ""
 
 
 class AdviceSynthesisAgent:
@@ -116,8 +152,38 @@ class AdviceSynthesisAgent:
                 f"Utilise {first_missed['section']} ({unused_str}) via {instrument} before March 31"
             )
 
+        # ── Gemini AI-powered summary ─────────────────────────────────────────
+        rule_based_summary = " ".join(summary_lines)
+        ai_summary = ""
+        try:
+            profile_text = (
+                f"Overall Score: {score}/100 ({analysis.get('overall_status', '')})\n"
+                f"Monthly Income: ₹{fire.get('user_profile', {}).get('monthly_income', 'N/A')}\n"
+                f"Required Retirement Corpus: ₹{fire.get('required_corpus', 0):,.0f}\n"
+                f"SIP Required: ₹{sip:,.0f}/month\n"
+                f"Years to Retire: {years}\n"
+                f"Tax Savings Available: ₹{tax_savings:,.0f} (switch to {regime})\n"
+                f"FIRE Feasible: {feasible}"
+            )
+            key_metrics = {
+                "score": score,
+                "status": analysis.get("overall_status"),
+                "top_priorities": [p.get("dimension") for p in priorities[:3]],
+                "sip_required": sip,
+                "tax_savings": tax_savings,
+                "recommended_regime": regime,
+                "years_to_retire": years,
+                "required_corpus": fire.get("required_corpus", 0),
+            }
+            ai_summary = _get_gemini_summary(profile_text, json.dumps(key_metrics, indent=2))
+        except Exception:
+            pass
+
+        final_summary = ai_summary if ai_summary else rule_based_summary
+
         return {
-            "summary": " ".join(summary_lines),
+            "summary": final_summary,
+            "ai_powered": bool(ai_summary),
             "overall_score": score,
             "priorities": priorities,
             "action_this_month": action_this_month,

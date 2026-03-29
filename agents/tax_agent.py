@@ -187,13 +187,13 @@ class TaxAgent:
             "old_regime": {
                 "taxable_income": round(taxable_old),
                 "tax_payable": round(tax_old_final),
-                "effective_rate": f"{tax_old_final / annual_income * 100:.1f}%",
+                "effective_rate": round(tax_old_final / annual_income * 100, 1),
                 "step_by_step": trace_old,
             },
             "new_regime": {
                 "taxable_income": round(taxable_new),
                 "tax_payable": round(tax_new_final),
-                "effective_rate": f"{tax_new_final / annual_income * 100:.1f}%",
+                "effective_rate": round(tax_new_final / annual_income * 100, 1),
                 "step_by_step": trace_new,
             },
             "missed_deductions": missed,

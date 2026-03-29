@@ -130,4 +130,4 @@ ehthumbs.db
 Thumbs.db
 
 # Project specific
-ai_finance_advisor/backend/venv/
+venv/
