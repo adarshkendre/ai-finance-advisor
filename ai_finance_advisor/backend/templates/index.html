@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Money Mentor — Financial Advisor</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+  <!-- ── NAV ─────────────────────────────────────────────────────────── -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="nav-icon">&#9670;</span>
+      <span class="nav-title">AI Money Mentor</span>
+      <span class="nav-badge">Track 9 · ET AI Hackathon 2026</span>
+    </div>
+    <div class="nav-status">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">Connecting…</span>
+    </div>
+  </nav>
+
+  <!-- ── HERO ─────────────────────────────────────────────────────────── -->
+  <header class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">Your AI-Powered<br><span class="accent">Financial Intelligence</span></h1>
+      <p class="hero-sub">Multi-agent analysis: FIRE planning · Tax optimisation · Health scoring · Life events</p>
+      <div class="hero-chips">
+        <span class="chip">7 Specialist Agents</span>
+        <span class="chip">SEBI Compliant</span>
+        <span class="chip">Full Audit Trail</span>
+        <span class="chip">FY 2024-25 Tax Slabs</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="orbit-ring ring1"></div>
+      <div class="orbit-ring ring2"></div>
+      <div class="orbit-ring ring3"></div>
+      <div class="orbit-center">&#9670;</div>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- ── DEMO SCENARIOS ───────────────────────────────────────────────── -->
+    <section class="section scenarios-section">
+      <div class="section-header">
+        <h2 class="section-title">Quick Load Scenarios</h2>
+        <p class="section-sub">Pre-built hackathon scenarios — click to auto-fill and analyse</p>
+      </div>
+      <div class="scenarios-grid" id="scenariosGrid">
+        <div class="scenario-card skeleton"></div>
+        <div class="scenario-card skeleton"></div>
+        <div class="scenario-card skeleton"></div>
+        <div class="scenario-card skeleton"></div>
+      </div>
+    </section>
+
+    <!-- ── INPUT FORM ────────────────────────────────────────────────────── -->
+    <section class="section form-section">
+      <div class="section-header">
+        <h2 class="section-title">Your Financial Profile</h2>
+        <p class="section-sub">All amounts in Indian Rupees (₹). Required fields marked with *</p>
+      </div>
+
+      <form id="analysisForm" class="profile-form" novalidate>
+
+        <!-- Core Profile -->
+        <div class="form-group-title">
+          <span class="form-group-icon">&#128100;</span> Core Profile
+        </div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="age">Age *</label>
+            <input type="number" id="age" name="age" min="18" max="80" placeholder="e.g. 34" required />
+            <span class="field-hint">Your current age in years</span>
+          </div>
+          <div class="form-field">
+            <label for="risk_profile">Risk Profile *</label>
+            <select id="risk_profile" name="risk_profile" required>
+              <option value="conservative">Conservative</option>
+              <option value="moderate" selected>Moderate</option>
+              <option value="aggressive">Aggressive</option>
+            </select>
+            <span class="field-hint">Your investment risk appetite</span>
+          </div>
+        </div>
+
+        <!-- Income & Expenses -->
+        <div class="form-group-title">
+          <span class="form-group-icon">&#128181;</span> Income &amp; Expenses
+        </div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="monthly_income">Monthly Income *</label>
+            <div class="input-prefix">
+              <span>₹</span>
+              <input type="number" id="monthly_income" name="monthly_income" min="0" placeholder="200000" required />
+            </div>
+            <span class="field-hint">Gross monthly income</span>
+          </div>
+          <div class="form-field">
+            <label for="monthly_expenses">Monthly Expenses *</label>
+            <div class="input-prefix">
+              <span>₹</span>
+              <input type="number" id="monthly_expenses" name="monthly_expenses" min="0" placeholder="80000" required />
+            </div>
+            <span class="field-hint">Total monthly outflow</span>
+          </div>
+          <div class="form-field">
+            <label for="debt_emi">Monthly Debt EMI</label>
+            <div class="input-prefix">
+              <span>₹</span>
+              <input type="number" id="debt_emi" name="debt_emi" min="0" placeholder="0" />
+            </div>
+            <span class="field-hint">Loan EMIs (home, car, personal)</span>
+          </div>
+          <div class="form-field">
+            <label for="existing_investments">Existing Investments *</label>
+            <div class="input-prefix">
+              <span>₹</span>
+              <input type="number" id="existing_investments" name="existing_investments" min="0" placeholder="1800000" required />
+            </div>
+            <span class="field-hint">MF + PPF + stocks + FD total</span>
+          </div>
+        </div>
+
+        <!-- Retirement Goals -->
+        <div class="form-group-title">
+          <span class="form-group-icon">&#127968;</span> Retirement Goals
+        </div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="target_retirement_age">Target Retirement Age</label>
+            <input type="number" id="target_retirement_age" name="target_retirement_age" min="30" max="80" placeholder="60" />
+            <span class="field-hint">Age you wish to retire</span>
+          </div>
+          <div class="form-field">
+            <label for="target_monthly_corpus">Monthly Income at Retirement</label>
+            <div class="input-prefix">
+              <span>₹</span>
+              <input type="number" id="target_monthly_corpus" name="target_monthly_corpus" min="0" placeholder="150000" />
+            </div>
+            <span class="field-hint">Today's value (inflation-adjusted)</span>
+          </div>
+        </div>
+
+        <!-- Life Event -->
+        <div class="form-group-title">
+          <span class="form-group-icon">&#127881;</span> Life Event <span class="optional-tag">Optional</span>
+        </div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="life_event">Event Type</label>
+            <select id="life_event" name="life_event">
+              <option value="">None</option>
+              <option value="bonus">Bonus Received</option>
+              <option value="marriage">Getting Married</option>
+              <option value="baby">New Baby</option>
+              <option value="inheritance">Inheritance</option>
+            </select>
+            <span class="field-hint">Recent or upcoming life event</span>
+          </div>
+          <div class="form-field">
+            <label for="life_event_amount">Event Amount</label>
+            <div class="input-prefix">
+              <span>₹</span>
+              <input type="number" id="life_event_amount" name="life_event_amount" min="0" placeholder="0" />
+            </div>
+            <span class="field-hint">Bonus / inheritance amount (if any)</span>
+          </div>
+        </div>
+
+        <!-- Tax Details -->
+        <div class="form-group-title">
+          <span class="form-group-icon">&#128196;</span> Tax Details <span class="optional-tag">Optional — for regime comparison</span>
+        </div>
+        <div class="form-grid form-grid-3">
+          <div class="form-field">
+            <label for="hra">HRA Received (Annual)</label>
+            <div class="input-prefix"><span>₹</span>
+              <input type="number" id="hra" placeholder="360000" />
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="rent_paid">Rent Paid (Annual)</label>
+            <div class="input-prefix"><span>₹</span>
+              <input type="number" id="rent_paid" placeholder="480000" />
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="deductions_80c">80C Deductions</label>
+            <div class="input-prefix"><span>₹</span>
+              <input type="number" id="deductions_80c" placeholder="150000" />
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="nps_80ccd">NPS (80CCD)</label>
+            <div class="input-prefix"><span>₹</span>
+              <input type="number" id="nps_80ccd" placeholder="50000" />
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="home_loan_interest">Home Loan Interest</label>
+            <div class="input-prefix"><span>₹</span>
+              <input type="number" id="home_loan_interest" placeholder="40000" />
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="health_insurance_80d">Health Insurance (80D)</label>
+            <div class="input-prefix"><span>₹</span>
+              <input type="number" id="health_insurance_80d" placeholder="25000" />
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="ppf_balance">PPF Balance</label>
+            <div class="input-prefix"><span>₹</span>
+              <input type="number" id="ppf_balance" placeholder="600000" />
+            </div>
+          </div>
+          <div class="form-field checkbox-field">
+            <label class="checkbox-label">
+              <input type="checkbox" id="city_metro" />
+              <span class="checkbox-custom"></span>
+              Metro city (for HRA calculation)
+            </label>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" id="clearBtn">Clear Form</button>
+          <button type="submit" class="btn btn-primary" id="analyseBtn">
+            <span class="btn-icon">&#9670;</span>
+            Analyse My Finances
+          </button>
+        </div>
+
+      </form>
+    </section>
+
+    <!-- ── LOADING ───────────────────────────────────────────────────────── -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+      <div class="loading-card">
+        <div class="agent-pipeline">
+          <div class="agent-step" data-agent="Input Validator">
+            <div class="agent-dot"></div>
+            <span>Input Validator</span>
+          </div>
+          <div class="pipeline-line"></div>
+          <div class="agent-step" data-agent="Health Analyser">
+            <div class="agent-dot"></div>
+            <span>Health Analyser</span>
+          </div>
+          <div class="pipeline-line"></div>
+          <div class="agent-step" data-agent="FIRE Agent">
+            <div class="agent-dot"></div>
+            <span>FIRE Agent</span>
+          </div>
+          <div class="pipeline-line"></div>
+          <div class="agent-step" data-agent="Tax Agent">
+            <div class="agent-dot"></div>
+            <span>Tax Agent</span>
+          </div>
+          <div class="pipeline-line"></div>
+          <div class="agent-step" data-agent="Life Events">
+            <div class="agent-dot"></div>
+            <span>Life Events</span>
+          </div>
+          <div class="pipeline-line"></div>
+          <div class="agent-step" data-agent="Advice Synthesis">
+            <div class="agent-dot"></div>
+            <span>Advice Synthesis</span>
+          </div>
+          <div class="pipeline-line"></div>
+          <div class="agent-step" data-agent="Guardrail">
+            <div class="agent-dot"></div>
+            <span>Guardrail</span>
+          </div>
+        </div>
+        <p class="loading-msg" id="loadingMsg">Running 7 specialist agents…</p>
+      </div>
+    </div>
+
+    <!-- ── RESULTS ───────────────────────────────────────────────────────── -->
+    <section class="results-section hidden" id="resultsSection">
+
+      <!-- Header bar -->
+      <div class="results-header">
+        <div>
+          <h2 class="results-title">Your Financial Plan</h2>
+          <p class="results-sub" id="resultsSummary"></p>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="newAnalysisBtn">&#8592; New Analysis</button>
+      </div>
+
+      <!-- Overall Score -->
+      <div class="score-banner" id="scoreBanner">
+        <div class="score-gauge-wrap">
+          <div class="score-gauge" id="scoreGauge">
+            <div class="gauge-ring" id="gaugeRing"></div>
+            <div class="gauge-center">
+              <span class="gauge-number" id="gaugeNumber">0</span>
+              <span class="gauge-label">/ 100</span>
+            </div>
+          </div>
+          <p class="score-status" id="scoreStatus"></p>
+        </div>
+        <div class="score-summary-text" id="scoreSummaryText"></div>
+      </div>
+
+      <!-- 6 Dimensions -->
+      <div class="section">
+        <div class="section-header">
+          <h3 class="section-title">Money Health Score — 6 Dimensions</h3>
+          <p class="section-sub">Scored 0–100 across six critical financial pillars</p>
+        </div>
+        <div class="dimensions-grid" id="dimensionsGrid"></div>
+      </div>
+
+      <!-- FIRE Plan -->
+      <div class="section" id="fireSection">
+        <div class="section-header">
+          <h3 class="section-title">&#128293; FIRE Retirement Plan</h3>
+          <p class="section-sub" id="fireSubtitle"></p>
+        </div>
+        <div class="fire-cards" id="fireCards"></div>
+        <div class="phase-plan" id="phasePlan"></div>
+      </div>
+
+      <!-- Tax Comparison -->
+      <div class="section" id="taxSection">
+        <div class="section-header">
+          <h3 class="section-title">&#128196; Tax Regime Comparison — FY 2024-25</h3>
+          <p class="section-sub">Old Regime vs New Regime — full step-by-step breakdown</p>
+        </div>
+        <div class="tax-comparison" id="taxComparison"></div>
+        <div class="tax-suggestions" id="taxSuggestions"></div>
+      </div>
+
+      <!-- Life Event -->
+      <div class="section hidden" id="lifeEventSection">
+        <div class="section-header">
+          <h3 class="section-title" id="lifeEventTitle">&#127881; Life Event Plan</h3>
+          <p class="section-sub">Tailored advice for your life event</p>
+        </div>
+        <div class="life-event-content" id="lifeEventContent"></div>
+      </div>
+
+      <!-- Priorities -->
+      <div class="section">
+        <div class="section-header">
+          <h3 class="section-title">&#127919; Top Priorities</h3>
+          <p class="section-sub">Actions ranked by urgency and financial impact</p>
+        </div>
+        <div class="priorities-list" id="prioritiesList"></div>
+      </div>
+
+      <!-- Action This Month -->
+      <div class="section">
+        <div class="section-header">
+          <h3 class="section-title">&#9889; Do This Month</h3>
+          <p class="section-sub">Your immediate action plan — start here</p>
+        </div>
+        <div class="action-list" id="actionList"></div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="disclaimer-box" id="disclaimerBox"></div>
+
+    </section>
+
+    <!-- ── ERROR ─────────────────────────────────────────────────────────── -->
+    <div class="error-card hidden" id="errorCard">
+      <div class="error-icon">&#9888;</div>
+      <h3 class="error-title">Analysis Failed</h3>
+      <p class="error-msg" id="errorMsg"></p>
+      <button class="btn btn-primary" id="errorRetryBtn">Try Again</button>
+    </div>
+
+  </main>
+
+  <!-- ── FOOTER ────────────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <p>AI Money Mentor &copy; 2026 &middot; ET AI Hackathon Track 9 &middot;
+      All analysis is AI-generated for informational purposes only.
+      Not licensed investment advice.</p>
+  </footer>
+
+  <script>
+    // ── Utilities ──────────────────────────────────────────────────────────
+    const fmt = (n) => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(n);
+    const fmtRs = (n) => '₹' + fmt(n);
+    const $  = (sel) => document.querySelector(sel);
+    const $$ = (sel) => document.querySelectorAll(sel);
+    const show = (el) => el && el.classList.remove('hidden');
+    const hide = (el) => el && el.classList.add('hidden');
+
+    // ── Health Check ───────────────────────────────────────────────────────
+    async function checkHealth() {
+      try {
+        const r = await fetch('/health');
+        const d = await r.json();
+        $('#statusDot').className = d.status === 'ok' ? 'status-dot online' : 'status-dot error';
+        $('#statusText').textContent = d.status === 'ok' ? `Online · ${d.agents} Agents` : 'Degraded';
+      } catch {
+        $('#statusDot').className = 'status-dot error';
+        $('#statusText').textContent = 'Offline';
+      }
+    }
+    checkHealth();
+
+    // ── Load Scenarios ─────────────────────────────────────────────────────
+    async function loadScenarios() {
+      try {
+        const r = await fetch('/scenarios');
+        const data = await r.json();
+        const grid = $('#scenariosGrid');
+        grid.innerHTML = '';
+        const icons = ['&#128293;', '&#128196;', '&#128119;', '&#127873;'];
+        const colors = ['card-fire', 'card-tax', 'card-baby', 'card-bonus'];
+        let i = 0;
+        for (const [key, sc] of Object.entries(data)) {
+          const card = document.createElement('div');
+          card.className = `scenario-card ${colors[i] || ''}`;
+          card.innerHTML = `
+            <div class="sc-icon">${icons[i] || '&#9670;'}</div>
+            <div class="sc-label">${sc.label || key}</div>
+            <div class="sc-desc">${sc.description}</div>
+            <button class="btn btn-outline-sm sc-btn">Load &amp; Analyse</button>
+          `;
+          card.querySelector('.sc-btn').addEventListener('click', () => loadScenario(sc.input));
+          grid.appendChild(card);
+          i++;
+        }
+      } catch (e) {
+        $('#scenariosGrid').innerHTML = '<p class="muted">Could not load scenarios.</p>';
+      }
+    }
+    loadScenarios();
+
+    // ── Fill form from scenario ────────────────────────────────────────────
+    function loadScenario(input) {
+      const set = (id, val) => { const el = $(id); if (el) el.value = val ?? ''; };
+      set('#age', input.age);
+      set('#monthly_income', input.monthly_income);
+      set('#monthly_expenses', input.monthly_expenses);
+      set('#existing_investments', input.existing_investments);
+      set('#debt_emi', input.debt_emi || '');
+      set('#target_retirement_age', input.target_retirement_age || '');
+      set('#target_monthly_corpus', input.target_monthly_corpus || '');
+      set('#risk_profile', input.risk_profile || 'moderate');
+      set('#life_event', input.life_event || '');
+      set('#life_event_amount', input.life_event_amount || '');
+      const ss = input.salary_structure || {};
+      set('#hra', ss.hra || '');
+      set('#rent_paid', ss.rent_paid || '');
+      set('#deductions_80c', ss.deductions_80c || '');
+      set('#nps_80ccd', ss.nps_80ccd || '');
+      set('#home_loan_interest', ss.home_loan_interest || '');
+      set('#health_insurance_80d', ss.health_insurance_80d || '');
+      set('#ppf_balance', ss.ppf_balance || '');
+      $('#city_metro').checked = ss.city_metro || false;
+      $('#analysisForm').scrollIntoView({ behavior: 'smooth' });
+      // Auto-submit
+      setTimeout(() => submitForm(input), 400);
+    }
+
+    // ── Clear Form ─────────────────────────────────────────────────────────
+    $('#clearBtn').addEventListener('click', () => {
+      $('#analysisForm').reset();
+      hide($('#resultsSection'));
+      hide($('#errorCard'));
+    });
+
+    // ── New Analysis ───────────────────────────────────────────────────────
+    $('#newAnalysisBtn').addEventListener('click', () => {
+      hide($('#resultsSection'));
+      hide($('#errorCard'));
+      $('#analysisForm').scrollIntoView({ behavior: 'smooth' });
+    });
+    $('#errorRetryBtn').addEventListener('click', () => {
+      hide($('#errorCard'));
+      $('#analysisForm').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // ── Build payload from form ────────────────────────────────────────────
+    function buildPayload() {
+      const g = (id) => { const el = $(id); return el ? el.value.trim() : ''; };
+      const num = (id) => { const v = parseFloat(g(id)); return isNaN(v) ? undefined : v; };
+
+      const payload = {
+        age: num('#age'),
+        monthly_income: num('#monthly_income'),
+        monthly_expenses: num('#monthly_expenses'),
+        existing_investments: num('#existing_investments'),
+        risk_profile: g('#risk_profile') || 'moderate',
+      };
+      if (num('#debt_emi')) payload.debt_emi = num('#debt_emi');
+      if (num('#target_retirement_age')) payload.target_retirement_age = num('#target_retirement_age');
+      if (num('#target_monthly_corpus')) payload.target_monthly_corpus = num('#target_monthly_corpus');
+      const le = g('#life_event');
+      if (le) { payload.life_event = le; payload.life_event_amount = num('#life_event_amount') || 0; }
+
+      // Tax / salary structure
+      const ss = {};
+      if (num('#hra')) ss.hra = num('#hra');
+      if (num('#rent_paid')) ss.rent_paid = num('#rent_paid');
+      if (num('#deductions_80c')) ss.deductions_80c = num('#deductions_80c');
+      if (num('#nps_80ccd')) ss.nps_80ccd = num('#nps_80ccd');
+      if (num('#home_loan_interest')) ss.home_loan_interest = num('#home_loan_interest');
+      if (num('#health_insurance_80d')) ss.health_insurance_80d = num('#health_insurance_80d');
+      if (num('#ppf_balance')) ss.ppf_balance = num('#ppf_balance');
+      if ($('#city_metro').checked) ss.city_metro = true;
+      if (Object.keys(ss).length) payload.salary_structure = ss;
+
+      return payload;
+    }
+
+    // ── Form Submit ────────────────────────────────────────────────────────
+    $('#analysisForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await submitForm(buildPayload());
+    });
+
+    async function submitForm(payload) {
+      hide($('#resultsSection'));
+      hide($('#errorCard'));
+      show($('#loadingOverlay'));
+      animateAgents();
+
+      try {
+        const r = await fetch('/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await r.json();
+        hide($('#loadingOverlay'));
+        if (data.error || data.status === 'incomplete') {
+          showError(data.error || data.clarification || 'Missing required fields.');
+        } else {
+          renderResults(data);
+        }
+      } catch (err) {
+        hide($('#loadingOverlay'));
+        showError('Network error — could not reach the analysis engine.');
+      }
+    }
+
+    // ── Animate agent pipeline ─────────────────────────────────────────────
+    function animateAgents() {
+      const steps = $$('.agent-step');
+      const msgs = [
+        'Validating your inputs…', 'Scoring your financial health…',
+        'Calculating FIRE retirement plan…', 'Comparing tax regimes…',
+        'Analysing life events…', 'Synthesising advice…', 'Applying compliance guardrails…'
+      ];
+      steps.forEach(s => s.classList.remove('active', 'done'));
+      let i = 0;
+      const tick = () => {
+        if (i > 0) steps[i - 1].classList.replace('active', 'done');
+        if (i < steps.length) {
+          steps[i].classList.add('active');
+          $('#loadingMsg').textContent = msgs[i] || 'Processing…';
+          i++;
+          setTimeout(tick, 700);
+        }
+      };
+      tick();
+    }
+
+    // ── Show Error ─────────────────────────────────────────────────────────
+    function showError(msg) {
+      const ec = $('#errorCard');
+      $('#errorMsg').textContent = msg;
+      show(ec);
+      ec.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ── Score colour ───────────────────────────────────────────────────────
+    function scoreColor(s) {
+      if (s >= 80) return '#22c55e';
+      if (s >= 60) return '#f59e0b';
+      if (s >= 40) return '#f97316';
+      return '#ef4444';
+    }
+    function scoreLabel(s) {
+      if (s >= 80) return 'Excellent';
+      if (s >= 60) return 'Good';
+      if (s >= 40) return 'Fair';
+      return 'Needs Work';
+    }
+
+    // ── Render Results ─────────────────────────────────────────────────────
+    function renderResults(data) {
+      // API response keys: final_advice, money_health_score, tax_analysis, fire_plan
+      const advice   = data.final_advice       || {};
+      const analysis = data.money_health_score  || {};
+      const fire     = data.fire_plan           || {};
+      const tax      = data.tax_analysis        || {};
+      const life     = data.life_event_advice   || {};
+
+      const score = advice.overall_score || analysis.overall_score || 0;
+      $('#resultsSummary').textContent = advice.summary || '';
+
+      // Gauge
+      const deg = Math.round((score / 100) * 360);
+      $('#gaugeRing').style.background =
+        `conic-gradient(${scoreColor(score)} ${deg}deg, #1e293b ${deg}deg)`;
+      animateNumber('#gaugeNumber', score);
+      $('#scoreStatus').textContent = scoreLabel(score);
+      $('#scoreStatus').style.color = scoreColor(score);
+      $('#scoreBanner').style.setProperty('--score-color', scoreColor(score));
+      $('#scoreSummaryText').textContent = advice.summary || '';
+
+      renderDimensions(analysis.dimensions || {});
+      renderFire(fire);
+      renderTax(tax);
+
+      // Life event
+      if (life && Object.keys(life).length) {
+        renderLifeEvent(life);
+        show($('#lifeEventSection'));
+      } else {
+        hide($('#lifeEventSection'));
+      }
+
+      renderPriorities(advice.priorities || []);
+      renderActions(advice.action_this_month || []);
+
+      // Disclaimers
+      const disc    = advice.sebi_disclaimer || '';
+      const taxDisc = advice.tax_disclaimer  || '';
+      if (disc || taxDisc) {
+        $('#disclaimerBox').innerHTML =
+          `<div class="disc-icon">&#9888;</div>` +
+          (disc    ? `<p>${disc}</p>`            : '') +
+          (taxDisc ? `<p class="muted">${taxDisc}</p>` : '');
+      }
+
+      show($('#resultsSection'));
+      $('#resultsSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ── Animate number counter ────────────────────────────────────────────
+    function animateNumber(sel, target) {
+      const el = $(sel);
+      let cur = 0;
+      const step = Math.max(1, Math.round(target / 40));
+      const t = setInterval(() => {
+        cur = Math.min(cur + step, target);
+        el.textContent = cur;
+        if (cur >= target) clearInterval(t);
+      }, 30);
+    }
+
+    // ── Render 6 Dimensions ───────────────────────────────────────────────
+    function renderDimensions(dims) {
+      const labels = {
+        emergency_preparedness: ['Emergency Fund', '&#128737;'],
+        insurance_coverage:     ['Insurance',      '&#128138;'],
+        investment_diversification: ['Diversification', '&#128200;'],
+        debt_health:            ['Debt Health',    '&#128176;'],
+        tax_efficiency:         ['Tax Efficiency', '&#128196;'],
+        retirement_readiness:   ['Retirement',     '&#127968;'],
+      };
+      const grid = $('#dimensionsGrid');
+      grid.innerHTML = '';
+      for (const [key, d] of Object.entries(dims)) {
+        const [label, icon] = labels[key] || [key, '&#9670;'];
+        const s = d.score || 0;
+        const card = document.createElement('div');
+        card.className = 'dim-card';
+        card.innerHTML = `
+          <div class="dim-header">
+            <span class="dim-icon">${icon}</span>
+            <span class="dim-label">${label}</span>
+            <span class="dim-score" style="color:${scoreColor(s)}">${s}</span>
+          </div>
+          <div class="dim-bar-wrap">
+            <div class="dim-bar" style="width:${s}%; background:${scoreColor(s)}"></div>
+          </div>
+          <div class="dim-status" style="color:${scoreColor(s)}">${d.status || scoreLabel(s)}</div>
+          <p class="dim-reasoning">${d.reasoning || ''}</p>
+          <p class="dim-action">${d.action || ''}</p>
+        `;
+        grid.appendChild(card);
+      }
+    }
+
+    // ── Render FIRE Plan ──────────────────────────────────────────────────
+    function renderFire(fire) {
+      $('#fireSubtitle').textContent =
+        fire.retirement_target_age
+          ? `Retire at ${fire.retirement_target_age} · ${fire.years_to_retire} years away`
+          : '';
+
+      const cards = $('#fireCards');
+      cards.innerHTML = '';
+
+      const sipReq = fire.sip_required_monthly || fire.sip_required || 0;
+      const fvExisting = fire.projected_existing_at_retirement || fire.future_value_existing || 0;
+      const items = [
+        { label: 'Required Corpus', value: fmtRs(fire.required_corpus || 0), icon: '&#127381;', sub: 'Inflation-adjusted' },
+        { label: 'Monthly SIP Needed', value: fmtRs(sipReq), icon: '&#128200;', sub: 'To bridge the gap' },
+        { label: 'Existing Corpus FV', value: fmtRs(fvExisting), icon: '&#128181;', sub: 'Projected at retirement' },
+        { label: 'Feasibility', value: fire.feasible ? '&#10003; Feasible' : '&#10007; SIP Shortfall', icon: '&#9989;', sub: fire.feasible ? 'Within savings capacity' : fmtRs(Math.max(0, sipReq - (fire.user_profile?.monthly_savings || 0))) + ' gap' },
+      ];
+
+      items.forEach(it => {
+        const c = document.createElement('div');
+        c.className = 'fire-card';
+        c.innerHTML = `
+          <div class="fire-icon">${it.icon}</div>
+          <div class="fire-label">${it.label}</div>
+          <div class="fire-value">${it.value}</div>
+          <div class="fire-sub">${it.sub}</div>
+        `;
+        cards.appendChild(c);
+      });
+
+      // SIP allocation — flatten nested {equity:{fund:amt}, debt:{fund:amt}, total_sip:n}
+      const allocRaw = fire.sip_allocation || {};
+      const flatAlloc = {};
+      for (const [cat, val] of Object.entries(allocRaw)) {
+        if (cat === 'total_sip') continue;
+        if (typeof val === 'object' && val !== null) {
+          for (const [fund, amt] of Object.entries(val)) flatAlloc[fund] = amt;
+        } else if (typeof val === 'number') {
+          flatAlloc[cat] = val;
+        }
+      }
+      if (Object.keys(flatAlloc).length) {
+        const pp = $('#phasePlan');
+        pp.innerHTML = '<h4 class="phase-title">Recommended SIP Allocation</h4>';
+        const allocGrid = document.createElement('div');
+        allocGrid.className = 'alloc-grid';
+        for (const [fund, amt] of Object.entries(flatAlloc)) {
+          const item = document.createElement('div');
+          item.className = 'alloc-item';
+          item.innerHTML = `
+            <span class="alloc-fund">${fund.replace(/_/g,' ')}</span>
+            <span class="alloc-amt">${fmtRs(amt)}</span>
+          `;
+          allocGrid.appendChild(item);
+        }
+        pp.appendChild(allocGrid);
+
+        // Phase plan
+        const phases = fire.phase_plan || [];
+        if (phases.length) {
+          const phaseH = document.createElement('h4');
+          phaseH.className = 'phase-title';
+          phaseH.textContent = 'Investment Phase Plan';
+          pp.appendChild(phaseH);
+          phases.forEach(ph => {
+            const phDiv = document.createElement('div');
+            phDiv.className = 'phase-item';
+            phDiv.innerHTML = `
+              <div class="phase-header">
+                <span class="phase-name">${ph.phase || ''}</span>
+                <span class="phase-years">${ph.years || ''}</span>
+                <span class="phase-equity">Equity ${ph.equity_pct || 0}% / Debt ${ph.debt_pct || 0}%</span>
+              </div>
+              <ul class="phase-actions">
+                ${(ph.key_actions || []).map(a => `<li>${a}</li>`).join('')}
+              </ul>
+            `;
+            pp.appendChild(phDiv);
+          });
+        }
+      }
+    }
+
+    // ── Render Tax Comparison ─────────────────────────────────────────────
+    function renderTax(tax) {
+      const wrap = $('#taxComparison');
+      wrap.innerHTML = '';
+      if (!tax || !tax.old_regime) { wrap.innerHTML = '<p class="muted">No tax data.</p>'; return; }
+
+      const old = tax.old_regime || {};
+      const nw  = tax.new_regime  || {};
+      const rec    = tax.recommended_regime          || '';
+      const saving = tax.tax_savings_vs_alternative  || tax.tax_saving || 0;
+
+      // tax_payable is the correct field (total_tax is an alias)
+      const oldTax = old.tax_payable ?? old.total_tax ?? 0;
+      const newTax = nw.tax_payable  ?? nw.total_tax  ?? 0;
+
+      wrap.innerHTML = `
+        <div class="regime-cards">
+          <div class="regime-card ${rec === 'old' ? 'regime-winner' : ''}">
+            <div class="regime-name">Old Regime ${rec === 'old' ? '<span class="winner-badge">Recommended</span>' : ''}</div>
+            <div class="regime-tax">${fmtRs(oldTax)}</div>
+            <div class="regime-taxable">Taxable income: ${fmtRs(old.taxable_income || 0)}</div>
+            <div class="regime-effective">Effective rate: ${(old.effective_rate || 0).toFixed(1)}%</div>
+          </div>
+          <div class="regime-vs">VS</div>
+          <div class="regime-card ${rec === 'new' ? 'regime-winner' : ''}">
+            <div class="regime-name">New Regime ${rec === 'new' ? '<span class="winner-badge">Recommended</span>' : ''}</div>
+            <div class="regime-tax">${fmtRs(newTax)}</div>
+            <div class="regime-taxable">Taxable income: ${fmtRs(nw.taxable_income || 0)}</div>
+            <div class="regime-effective">Effective rate: ${(nw.effective_rate || 0).toFixed(1)}%</div>
+          </div>
+        </div>
+        ${saving > 0 ? `<div class="tax-saving-banner">You save <strong>${fmtRs(saving)}</strong> annually by choosing the ${rec} regime</div>` : ''}
+      `;
+
+      // Missed deductions
+      const missed = tax.missed_deductions || [];
+      const suggs = tax.additional_tax_saving_suggestions || [];
+      const sw = $('#taxSuggestions');
+      sw.innerHTML = '';
+      if (missed.length || suggs.length) {
+        if (missed.length) {
+          const mh = document.createElement('h4'); mh.className = 'phase-title'; mh.textContent = 'Missed Deductions';
+          sw.appendChild(mh);
+          missed.forEach(m => {
+            const d = document.createElement('div'); d.className = 'missed-item';
+            d.innerHTML = `<span class="missed-section">${m.section}</span> <span class="missed-unused">${m.unused ? fmtRs(m.unused) + ' unused' : ''}</span> <span class="missed-desc">${m.description || ''}</span>`;
+            sw.appendChild(d);
+          });
+        }
+        if (suggs.length) {
+          const sh = document.createElement('h4'); sh.className = 'phase-title'; sh.textContent = 'Tax-Saving Suggestions';
+          sw.appendChild(sh);
+          const sg = document.createElement('div'); sg.className = 'sugg-grid';
+          suggs.forEach(s => {
+            const sc = document.createElement('div'); sc.className = 'sugg-card';
+            sc.innerHTML = `<div class="sugg-inst">${s.instrument || ''}</div><div class="sugg-max">Max: ${fmtRs(s.max_limit || 0)}</div><div class="sugg-why">${s.why || ''}</div>`;
+            sg.appendChild(sc);
+          });
+          sw.appendChild(sg);
+        }
+      }
+    }
+
+    // ── Render Life Event ─────────────────────────────────────────────────
+    function renderLifeEvent(life) {
+      const event = life.event || '';
+      $('#lifeEventTitle').innerHTML = `&#127881; ${event.charAt(0).toUpperCase() + event.slice(1)} — Life Event Plan`;
+      const content = $('#lifeEventContent');
+      content.innerHTML = '';
+      const actions = life.immediate_actions || life.actions || [];
+      const recs = life.recommendations || [];
+      const all = [...actions, ...recs];
+      if (all.length) {
+        const ul = document.createElement('ul'); ul.className = 'life-list';
+        all.forEach(a => { const li = document.createElement('li'); li.textContent = a; ul.appendChild(li); });
+        content.appendChild(ul);
+      }
+      const note = life.note || life.summary || '';
+      if (note) { const p = document.createElement('p'); p.className = 'life-note'; p.textContent = note; content.appendChild(p); }
+    }
+
+    // ── Render Priorities ─────────────────────────────────────────────────
+    function renderPriorities(priorities) {
+      const list = $('#prioritiesList');
+      list.innerHTML = '';
+      const urgencyColor = { High: '#ef4444', Medium: '#f59e0b', Low: '#22c55e' };
+      priorities.slice(0, 6).forEach((p, i) => {
+        const urg = p.urgency || 'Medium';
+        const item = document.createElement('div');
+        item.className = 'priority-item';
+        item.innerHTML = `
+          <div class="priority-rank">${i + 1}</div>
+          <div class="priority-body">
+            <div class="priority-dim">${p.dimension || ''}</div>
+            <div class="priority-action">${p.action || ''}</div>
+            ${p.amount ? `<div class="priority-amount">${p.amount}</div>` : ''}
+          </div>
+          <div class="priority-urg" style="color:${urgencyColor[urg] || '#f59e0b'}">${urg}</div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    // ── Render Actions ────────────────────────────────────────────────────
+    function renderActions(actions) {
+      const list = $('#actionList');
+      list.innerHTML = '';
+      actions.forEach((a, i) => {
+        const item = document.createElement('div');
+        item.className = 'action-item';
+        item.innerHTML = `<span class="action-num">${i + 1}</span><span class="action-text">${a}</span>`;
+        list.appendChild(item);
+      });
+    }
+  </script>
+
+</body>
+</html>

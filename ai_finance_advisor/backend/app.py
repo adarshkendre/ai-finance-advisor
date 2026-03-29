@@ -1,58 +1,67 @@
 """
-AI Money Mentor — Flask API
-============================
+AI Money Mentor — Flask API + Frontend
+=======================================
 Track 9: ET AI Hackathon 2026
 
 Routes:
-  POST /analyze          — Full financial analysis (main flow)
-  POST /update-plan      — Dynamic plan update (change one input)
+  GET  /                 — Frontend dashboard (HTML)
+  POST /analyze          — Full financial analysis
+  POST /update-plan      — Dynamic plan update (single field)
   GET  /health           — Service health check
-  GET  /scenarios        — Return preloaded demo scenarios
-
-Every route returns a full audit_trail for judge review.
+  GET  /scenarios        — Preloaded demo scenarios
+  GET  /api/info         — API service info (JSON)
 """
 
 import sys
 import os
 sys.path.insert(0, os.path.dirname(__file__))
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from orchestrator.orchestrator import Orchestrator
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates", static_folder="static")
 CORS(app)
 orchestrator = Orchestrator()
 
 
+# ── Frontend ─────────────────────────────────────────────────────────────────
+
 @app.route("/")
-def home():
+def index():
+    return render_template("index.html")
+
+
+# ── API Info ──────────────────────────────────────────────────────────────────
+
+@app.route("/api/info")
+def api_info():
     return jsonify({
         "service": "AI Money Mentor",
         "track": "Track 9 — ET AI Hackathon 2026",
         "version": "1.0.0",
+        "agents": 7,
         "endpoints": ["/analyze", "/update-plan", "/scenarios", "/health"]
     })
 
+
+# ── Health ────────────────────────────────────────────────────────────────────
 
 @app.route("/health")
 def health():
     return jsonify({"status": "ok", "agents": 7})
 
 
+# ── Analyze ───────────────────────────────────────────────────────────────────
+
 @app.route("/analyze", methods=["POST"])
 def analyze():
-    """
-    Main analysis endpoint.
-    Accepts full user financial profile and returns a complete plan.
-    """
     try:
         user_input = request.get_json(force=True)
         if not user_input:
             return jsonify({"error": "Request body must be JSON"}), 400
 
         result = orchestrator.run(user_input)
-
         status_code = 200 if result.get("status") == "success" else 400
         return jsonify(result), status_code
 
@@ -60,38 +69,24 @@ def analyze():
         return jsonify({
             "error": "Agent pipeline failure",
             "detail": str(e),
-            "recovery": "Check input format and retry. If issue persists, contact support."
+            "recovery": "Check input format and retry."
         }), 500
     except Exception as e:
-        return jsonify({
-            "error": "Unexpected error",
-            "detail": str(e)
-        }), 500
+        return jsonify({"error": "Unexpected error", "detail": str(e)}), 500
 
+
+# ── Update Plan ───────────────────────────────────────────────────────────────
 
 @app.route("/update-plan", methods=["POST"])
 def update_plan():
-    """
-    Dynamic plan update — user changes ONE field (e.g. retirement age from 50 to 55).
-    Re-runs the full pipeline with the updated field merged into the base profile.
-
-    Body: { "base_profile": {...}, "change": {"field": "target_retirement_age", "value": 55} }
-    """
     try:
         body = request.get_json(force=True)
         base = body.get("base_profile", {})
         change = body.get("change", {})
 
         if not base or not change:
-            return jsonify({
-                "error": "Provide 'base_profile' and 'change' fields.",
-                "example": {
-                    "base_profile": {"age": 34, "monthly_income": 200000},
-                    "change": {"field": "target_retirement_age", "value": 55}
-                }
-            }), 400
+            return jsonify({"error": "Provide 'base_profile' and 'change' fields."}), 400
 
-        # Merge the change
         field = change.get("field")
         value = change.get("value")
         if not field:
@@ -100,25 +95,20 @@ def update_plan():
         updated_profile = {**base, field: value}
         result = orchestrator.run(updated_profile)
         result["change_applied"] = {field: value}
-
         return jsonify(result), 200 if result.get("status") == "success" else 400
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 
+# ── Scenarios ─────────────────────────────────────────────────────────────────
+
 @app.route("/scenarios", methods=["GET"])
 def scenarios():
-    """
-    Returns pre-built demo scenarios for hackathon judges.
-    These match the mandatory Track 9 scenario pack exactly.
-    """
     return jsonify({
         "scenario_1_fire_plan": {
-            "description": (
-                "Track 9 mandatory — 34-year-old software engineer, "
-                "₹24L/year, ₹18L MF, ₹6L PPF, retire at 50 with ₹1.5L/month"
-            ),
+            "label": "FIRE Plan",
+            "description": "34-yr engineer, ₹24L/year, retire at 50 with ₹1.5L/month",
             "input": {
                 "age": 34,
                 "monthly_income": 200000,
@@ -131,10 +121,8 @@ def scenarios():
             }
         },
         "scenario_2_tax_edge_case": {
-            "description": (
-                "Track 9 mandatory — ₹18L base, ₹3.6L HRA, ₹1.5L 80C, "
-                "₹50K NPS, ₹40K home loan interest"
-            ),
+            "label": "Tax Optimisation",
+            "description": "₹18L base, ₹3.6L HRA, multiple deductions — old vs new regime",
             "input": {
                 "age": 35,
                 "monthly_income": 150000,
@@ -153,7 +141,8 @@ def scenarios():
             }
         },
         "scenario_3_life_event_baby": {
-            "description": "New baby — insurance upgrade, education corpus planning",
+            "label": "New Baby",
+            "description": "Insurance upgrade, education corpus & protection planning",
             "input": {
                 "age": 30,
                 "monthly_income": 120000,
@@ -165,7 +154,8 @@ def scenarios():
             }
         },
         "scenario_4_bonus_deployment": {
-            "description": "Annual bonus of ₹5L — optimal deployment strategy",
+            "label": "Bonus Deployment",
+            "description": "₹5L annual bonus — optimal investment strategy",
             "input": {
                 "age": 28,
                 "monthly_income": 100000,
@@ -183,7 +173,8 @@ def scenarios():
 if __name__ == "__main__":
     print("=" * 60)
     print("  AI Money Mentor — Track 9 ET AI Hackathon 2026")
-    print("  Running at http://127.0.0.1:5000")
-    print("  Agents: Orchestrator + 6 specialists")
+    print("  Frontend: http://0.0.0.0:5000/")
+    print("  API:      http://0.0.0.0:5000/analyze")
+    print("  Agents:   Orchestrator + 6 specialists")
     print("=" * 60)
     app.run(debug=True, host="0.0.0.0", port=5000)
